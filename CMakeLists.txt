@@ -9,9 +9,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Include directories
 include_directories(include)
+# Source files
+set(SOURCES
+    src/main.cpp
+)
+
+add_library(matrix_3d_snake_game STATIC
+    src/matrix_3d_snake_game/game.c
+)
 
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+target_link_libraries(${PROJECT_NAME} matrix_3d_snake_game)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
