@@ -12,7 +12,8 @@
  
 #include <stdlib.h>
 #include <stdio.h>
- 
+
+
 static const struct
 {
     float x, y;
@@ -51,8 +52,18 @@ static void error_callback(int error, const char* description)
  
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+        std::cout << "Escape key pressed, closing the window." << std::endl;
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+
+    if (action == GLFW_PRESS) {
+        std::cout << "Key Pressed: " << key << std::endl;
+    } else if (action == GLFW_RELEASE) {
+        std::cout << "Key Released: " << key << std::endl;
+    }
+
 }
  
 int main(void)
@@ -73,7 +84,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
  
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "Matrix 3D Snake Game", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
