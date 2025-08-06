@@ -3,8 +3,10 @@
 
 
 #include <iostream>
- 
-#include <glad/gl.h>
+
+#include <glad/glad.h>
+
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
  
@@ -14,37 +16,52 @@
 #include <stdio.h>
 
 
-static const struct
-{
-    float x, y;
-    float r, g, b;
-} vertices[3] =
-{
-    { -0.6f, -0.4f, 1.f, 0.f, 0.f },
-    {  0.6f, -0.4f, 0.f, 1.f, 0.f },
-    {   0.f,  0.6f, 0.f, 0.f, 1.f }
-};
- 
-static const char* vertex_shader_text =
-"#version 110\n"
-"uniform mat4 MVP;\n"
-"attribute vec3 vCol;\n"
-"attribute vec2 vPos;\n"
-"varying vec3 color;\n"
-"void main()\n"
-"{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
-"    color = vCol;\n"
-"}\n";
- 
-static const char* fragment_shader_text =
-"#version 110\n"
-"varying vec3 color;\n"
-"void main()\n"
-"{\n"
-"    gl_FragColor = vec4(color, 1.0);\n"
-"}\n";
- 
+#include <cmath>
+
+#include <glm/glm.hpp>                   // core GLM types (vec3, mat4, etc.)
+#include <glm/gtc/matrix_transform.hpp>  // lookAt, perspective
+#include <glm/gtc/type_ptr.hpp>          // value_ptr
+
+
+float yaw = -90.0f, pitch = 0.0f;
+float lastX = 400, lastY = 300;
+bool firstMouse = true;
+
+// Camera vectors
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float sensitivity = 0.1f;
+    float xoffset = (xpos - lastX) * sensitivity;
+    float yoffset = (lastY - ypos) * sensitivity;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    // Clamp pitch
+    if (pitch > 89.0f)  pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    // Update cameraFront vector
+    glm::vec3 front;
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
+
+
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -65,10 +82,49 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 
 }
+
+
+
+// Cube vertices (single face for demo)
+float cubeVertices[] = {
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f
+};
+
+const char* vertexShaderSrc = R"(
+#version 330 core
+layout(location = 0) in vec3 aPos;
+uniform mat4 view;
+uniform mat4 projection;
+void main() {
+    gl_Position = projection * view * vec4(aPos, 1.0);
+}
+)";
+
+const char* fragmentShaderSrc = R"(
+#version 330 core
+out vec4 FragColor;
+void main() {
+    FragColor = vec4(0.2, 0.6, 1.0, 1.0);
+}
+)";
+
+
+GLuint compileShader(GLenum type, const char* src) {
+    GLuint shader = glCreateShader(type);
+    glShaderSource(shader, 1, &src, nullptr);
+    glCompileShader(shader);
+    return shader;
+}
+
  
 int main(void)
 {
-        std::cout << "Welcome to the 3D Snake Game!" << std::endl;
+    std::cout << "Welcome to the 3D Snake Game!" << std::endl;
     start_game();
     // Game loop
 
@@ -78,83 +134,89 @@ int main(void)
  
     glfwSetErrorCallback(error_callback);
  
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
- 
+if (!glfwInit()) {
+    std::cerr << "Failed to init GLFW\n";
+    return -1;
+}
+
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
  
     window = glfwCreateWindow(640, 480, "Matrix 3D Snake Game", NULL, NULL);
     if (!window)
     {
+        std::cerr << "Failed to create window\n";
         glfwTerminate();
         exit(EXIT_FAILURE);
+        return -1;
     }
+
+ 
  
     glfwSetKeyCallback(window, key_callback);
+
+        // Register mouse move callback
+    glfwSetCursorPosCallback(window, mouse_callback);
+
+    // Capture and hide the mouse
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
  
     glfwMakeContextCurrent(window);
-    gladLoadGL(glfwGetProcAddress);
-    glfwSwapInterval(1);
- 
-    // NOTE: OpenGL error checks have been omitted for brevity
- 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
- 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    glCompileShader(vertex_shader);
- 
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    glCompileShader(fragment_shader);
- 
+        
+    // Load GLAD *after* context is current
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "GLAD load failed\n";
+        return -1;
+    }
+
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
+
+
+    vertex_shader = compileShader(GL_VERTEX_SHADER, vertexShaderSrc);
+    fragment_shader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSrc);
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
- 
-    mvp_location = glGetUniformLocation(program, "MVP");
-    vpos_location = glGetAttribLocation(program, "vPos");
-    vcol_location = glGetAttribLocation(program, "vCol");
- 
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) 0);
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) (sizeof(float) * 2));
- 
-    while (!glfwWindowShouldClose(window))
-    {
-        float ratio;
-        int width, height;
-        mat4x4 m, p, mvp;
- 
-        glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
- 
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
- 
-        mat4x4_identity(m);
-        mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        mat4x4_mul(mvp, p, m);
- 
-        glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
- 
-        glfwSwapBuffers(window);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO); glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    glEnable(GL_DEPTH_TEST);
+
+
+
+    while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        glClearColor(0.1, 0.1, 0.1, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glUseProgram(program);
+
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.f / 600.f, 0.1f, 100.0f);
+
+        GLuint viewLoc = glGetUniformLocation(program, "view");
+        GLuint projLoc = glGetUniformLocation(program, "projection");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glfwSwapBuffers(window);
     }
- 
-    glfwDestroyWindow(window);
- 
+
     glfwTerminate();
-    exit(EXIT_SUCCESS);
+    return 0;
 }
- 
