@@ -85,15 +85,57 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 
 
-// Cube vertices (single face for demo)
 float cubeVertices[] = {
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f
+    // positions          // colors
+    // Back face (red)
+    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+     0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+     0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+    -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  
+
+    // Front face (green)
+    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+     0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+     0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+     0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  
+
+    // Left face (blue)
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  
+    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  
+
+    // Right face (yellow)
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,  
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,  
+     0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f,  
+
+    // Bottom face (cyan)
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,  
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,  
+     0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  
+     0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  
+    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,  
+
+    // Top face (magenta)
+    -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 1.0f,  
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  
+     0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 1.0f,  
+    -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 1.0f
 };
+
 
 const char* vertexShaderSrc = R"(
 #version 330 core
@@ -189,7 +231,7 @@ if (!glfwInit()) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
     glEnable(GL_DEPTH_TEST);
@@ -212,7 +254,7 @@ if (!glfwInit()) {
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
     }
