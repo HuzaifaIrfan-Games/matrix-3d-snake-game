@@ -1,5 +1,4 @@
 
-#define MATRIX_SIZE 5
 
 #include "UserInputController.hpp"
 #include "LedMatrixCube.hpp"

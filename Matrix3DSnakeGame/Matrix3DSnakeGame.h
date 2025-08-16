@@ -1,8 +1,7 @@
 #pragma once
 
-#ifndef MATRIX_SIZE
-#define MATRIX_SIZE 5
-#endif
+
+#define MATRIX_SIZE 6
 
 #include <stdio.h>
 #include <stdbool.h>

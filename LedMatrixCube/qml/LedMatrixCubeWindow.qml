@@ -10,8 +10,8 @@ Window {
     visible: true
     title: "matrix_3d_snake_game"
     
-    property vector3d defaultCameraPosition: Qt.vector3d(700, 500, 300)
-    property real defaultYaw: 55.0    // Left/right rotation
+    property vector3d defaultCameraPosition: Qt.vector3d(100*ledMatrixCube.matrixSize, 100*ledMatrixCube.matrixSize, 110*ledMatrixCube.matrixSize)
+    property real defaultYaw: 25.0    // Left/right rotation
     property real defaultPitch: -30.0   // Up/down rotation
 
     // Expose API to C++
