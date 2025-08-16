@@ -1,6 +1,3 @@
-
-#define GAME_TICK_INTERVAL 2000
-
 #include "UserInputController.hpp"
 #include "LedMatrixCube.hpp"
 #include "Matrix3DSnakeGame/Matrix3DSnakeGame.h"
@@ -19,15 +16,20 @@
 SnakeGame snakeGame = newSnakeGame();
 
 // Create a 4D QVariantList: [x][y][z][c] where c=0(R),1(G),2(B)
-QVariantList createSampleLEDMatrixColorsFlattenArray() {
+QVariantList createSampleLEDMatrixColorsFlattenArray()
+{
     QVariantList colorArray;
-    for (int x = 0; x < MATRIX_SIZE; x++) {
+    for (int x = 0; x < MATRIX_SIZE; x++)
+    {
         QVariantList xList;
-        for (int y = 0; y < MATRIX_SIZE; y++) {
+        for (int y = 0; y < MATRIX_SIZE; y++)
+        {
             QVariantList yList;
-            for (int z = 0; z < MATRIX_SIZE; z++) {
+            for (int z = 0; z < MATRIX_SIZE; z++)
+            {
                 QVariantList colorChannels;
-                for (int c = 0; c < 3; c++) {
+                for (int c = 0; c < 3; c++)
+                {
                     colorChannels.append(0.1 + QRandomGenerator::global()->generateDouble() * (1.0 - 0.1));
                 }
                 yList.append(colorChannels);
@@ -41,13 +43,16 @@ QVariantList createSampleLEDMatrixColorsFlattenArray() {
     return colorArray;
 }
 
-
-QVariantList getLEDMatrixColorsBufferFlatten(){
+QVariantList getLEDMatrixColorsBufferFlatten()
+{
 
     QVariantList bufferList;
-    for (int x = 0; x < MATRIX_SIZE; x++) {
-        for (int y = 0; y < MATRIX_SIZE; y++) {
-            for (int z = 0; z < MATRIX_SIZE; z++) {
+    for (int x = 0; x < MATRIX_SIZE; x++)
+    {
+        for (int y = 0; y < MATRIX_SIZE; y++)
+        {
+            for (int z = 0; z < MATRIX_SIZE; z++)
+            {
                 ColorRGB color = snakeGame.ledMatrixColorsBuffer[x][y][z];
                 float r = color.r / 255.0f;
                 float g = color.g / 255.0f;
@@ -64,10 +69,8 @@ QVariantList getLEDMatrixColorsBufferFlatten(){
     return bufferList;
 }
 
-
-
-
-int LedMatrixCubeMain(int argc, char *argv[]) {
+int LedMatrixCubeMain(int argc, char *argv[])
+{
 
     QGuiApplication app(argc, argv);
 
@@ -82,30 +85,30 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
-        []() { QCoreApplication::exit(-1); },
+        []()
+        { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.loadFromModule("matrix_3d_snake_game", "LedMatrixCubeWindow");
 
     // Get reference to the QML API
     QObject *rootObject = engine.rootObjects().first();
-    QObject *ledCubeApi = rootObject->property("ledCubeApi").value<QObject*>();
+    QObject *ledCubeApi = rootObject->property("ledCubeApi").value<QObject *>();
 
     // Create sample 3D color array (5x5x5)
     QVariantList ledMatrixColorsFlatten = createSampleLEDMatrixColorsFlattenArray();
     // Direct call through exposed API
     QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
-        Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
-
+                              Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
 
     // QVariantList ledMatrix3DBufferFlatten = getLEDMatrix3DBufferFlatten();
     // // Direct call through exposed API
     // QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
     //     Q_ARG(QVariant, QVariant::fromValue(ledMatrix3DBufferFlatten)));
 
-
     // Create a QTimer for game ticks
     QTimer *gameTickTimer = new QTimer(&app);
-    QObject::connect(gameTickTimer, &QTimer::timeout, [&]() {
+    QObject::connect(gameTickTimer, &QTimer::timeout, [&]()
+                     {
         snakeGame.loop_tick(&snakeGame); // Advance game logic
 
         if (snakeGame.running) {
@@ -124,35 +127,34 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
 
         QVariantList ledMatrixColorsBufferFlatten = getLEDMatrixColorsBufferFlatten();
         QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
-            Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsBufferFlatten)));
-    });
-
-
-
+            Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsBufferFlatten))); });
 
     // Connect UserInputController signals to game logic
-    QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]() {
-        qDebug() << "Game reset requested";
-        snakeGame.reset(&snakeGame);
-        gameTickTimer->start(GAME_TICK_INTERVAL); // Tick every  ms
-    });
+    QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]()
+                     {
+                         qDebug() << "Game reset requested";
+                         snakeGame.reset(&snakeGame);
 
-    QObject::connect(&userInputController, &UserInputController::gameStopPressed, [&]() {
+                         QVariant returnedValue;
+                         QMetaObject::invokeMethod(ledCubeApi, "getGameTickMs", Qt::DirectConnection,
+                                                   Q_RETURN_ARG(QVariant, returnedValue));
+                         int gameTickMs = returnedValue.toInt();
+
+                         qDebug() << "Game tick interval set to:" << gameTickMs << "ms";
+                         gameTickTimer->start(gameTickMs); // Tick every X ms
+                     });
+
+    QObject::connect(&userInputController, &UserInputController::gameStopPressed, [&]()
+                     {
         qDebug() << "Game stop requested";
-        gameTickTimer->stop();
-    });
+        gameTickTimer->stop(); });
 
-    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection snake_direction) {
+    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection snake_direction)
+                     {
         // qDebug() << "Game snake direction changed to:" << direction;
-        snakeGame.change_snake_direction(&snakeGame, snake_direction);
-    });
-
-
-
-
+        snakeGame.change_snake_direction(&snakeGame, snake_direction); });
 
     return app.exec();
 }
 
-
-#include "LedMatrixCube.moc"  
+#include "LedMatrixCube.moc"

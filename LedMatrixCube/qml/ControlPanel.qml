@@ -12,10 +12,11 @@ Rectangle {
     // anchors.bottom: parent.bottom
     anchors.margins: 20
 
-property var game_info: "Game Info"  
- property var game_score: 0
- property var snake_length: 0
+    property int game_tick_ms: 1000
 
+    property var game_info: "Game Info"
+    property var game_score: 0
+    property var snake_length: 0
 
     Column {
         anchors.fill: parent
@@ -73,7 +74,6 @@ property var game_info: "Game Info"
             }
         }
 
-
         Label {
             text: "Game Controls:"
             font.bold: true
@@ -95,12 +95,25 @@ property var game_info: "Game Info"
             color: "white"
         }
 
-
         Label {
             text: "Game "
             font.bold: true
             color: "white"
         }
+
+        Label {
+            text: "Tick (ms):"
+            color: "white"
+        }
+        SpinBox {
+            from: 100
+            to: 5000
+            stepSize: 100
+            value: controlPanel.game_tick_ms
+            onValueChanged: controlPanel.game_tick_ms = value
+            width: parent.width
+        }
+
         Label {
             text: "Info: " + controlPanel.game_info
             color: "white"
@@ -113,8 +126,6 @@ property var game_info: "Game Info"
             text: "Snake Length: " + controlPanel.snake_length
             color: "white"
         }
-
-
     }
 
     function randomizeColors() {
@@ -159,7 +170,7 @@ property var game_info: "Game Info"
         }
         ledMatrixCube.setLedsColors(colors3drgb);
     }
-    
+
     function setGameInfo(tmp_game_info, tmp_game_score, tmp_snake_length) {
         controlPanel.game_info = tmp_game_info;
         controlPanel.game_score = tmp_game_score;

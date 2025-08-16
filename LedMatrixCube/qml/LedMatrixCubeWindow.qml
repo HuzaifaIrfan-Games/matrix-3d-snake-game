@@ -9,8 +9,8 @@ Window {
     // visibility: Window.FullScreen
     visible: true
     title: "matrix_3d_snake_game"
-    
-    property vector3d defaultCameraPosition: Qt.vector3d(100*ledMatrixCube.matrixSize, 100*ledMatrixCube.matrixSize, 110*ledMatrixCube.matrixSize)
+
+    property vector3d defaultCameraPosition: Qt.vector3d(100 * ledMatrixCube.matrixSize, 100 * ledMatrixCube.matrixSize, 110 * ledMatrixCube.matrixSize)
     property real defaultYaw: 25.0    // Left/right rotation
     property real defaultPitch: -30.0   // Up/down rotation
 
@@ -48,6 +48,11 @@ Window {
             return Qt.rgba(0, 0, 0, 1);
         }
 
+        function getGameTickMs() {
+            // console.log("Getting game tick interval", controlPanel.game_tick_ms);
+            return controlPanel.game_tick_ms;
+        }
+
         function setGameInfo(game_info, game_score, snake_length) {
             controlPanel.setGameInfo(game_info, game_score, snake_length);
         }
@@ -56,9 +61,6 @@ Window {
     View3D {
         id: view3d
         anchors.fill: parent
-
-
-
 
         environment: SceneEnvironment {
             clearColor: "#111111"
@@ -135,20 +137,20 @@ Window {
         // acceptedButtons: Qt.Key_W | Qt.Key_A | Qt.Key_S | Qt.Key_D | Qt.Key_R | Qt.Key_F
 
         Keys.onPressed: {
-            userInputController.handleKeyPress(event.key)
+            userInputController.handleKeyPress(event.key);
         }
 
         Keys.onReleased: {
-            userInputController.handleKeyRelease(event.key)
+            userInputController.handleKeyRelease(event.key);
         }
     }
-
-
 
     function resetCameraDefaults() {
         camera.position = defaultCameraPosition;
         camera.eulerRotation = Qt.vector3d(defaultPitch, defaultYaw, 0);
     }
 
-    ControlPanel { id: controlPanel }
+    ControlPanel {
+        id: controlPanel
+    }
 }

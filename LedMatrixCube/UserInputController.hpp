@@ -8,7 +8,8 @@
 class UserInputController : public QObject
 {
     Q_OBJECT
-    SnakeDirection currentSnakeDirection=DIR_X_POS;
+    SnakeDirection currentSnakeDirection = DIR_X_POS;
+
 public:
     explicit UserInputController(QObject *parent = nullptr);
 
@@ -17,10 +18,9 @@ signals:
     void keyReleased(int key);
     void gameResetPressed();
     void gameStopPressed();
-    void gameSnakeDirectionChanged(SnakeDirection snakeDirection); 
+    void gameSnakeDirectionChanged(SnakeDirection snakeDirection);
 
 public slots:
     void handleKeyPress(Qt::Key key);
     void handleKeyRelease(Qt::Key key);
-
 };

@@ -10,7 +10,7 @@ Node {
     property real ledSpacing: 100
 
     // 3D color array initialization
-    property var ledColors:initialize3DColorArray()
+    property var ledColors: initialize3DColorArray()
 
     function initialize3DColorArray() {
         var tmpLedColors = [];
@@ -28,29 +28,30 @@ Node {
         return tmpLedColors;
     }
 
-
-
-    function setLedColor(x,y,z,r,g,b) {
+    function setLedColor(x, y, z, r, g, b) {
         if (x >= 0 && x < ledMatrixCube.matrixSize && y >= 0 && y < ledMatrixCube.matrixSize && z >= 0 && z < ledMatrixCube.matrixSize) {
+            var a = 0.6;
+            if (r < 0.3 && g < 0.3 && b < 0.3) {
+                a = 0.3;
+            }
 
             if (r < 0.3) {
                 r = 0.3;
             }
             if (g < 0.3) {
-                g = 0.3 ;
+                g = 0.3;
             }
             if (b < 0.3) {
                 b = 0.3;
             }
 
-            ledMatrixCube.ledColors[x][y][z] = Qt.rgba(r, g, b, 0.6);
+            ledMatrixCube.ledColors[x][y][z] = Qt.rgba(r, g, b, a);
             // Debug output to verify color setting
             // console.log("Set LED color at", x, y, z, "to:", r, g, b);
             return;
         }
         console.warn("Invalid LED coordinates:", x, y, z, "for color:", r, g, b);
     }
-
 
     function setLedsColors(ledMatrixColors3D) {
         // console.log("Received colors3d:", colors3d);
@@ -61,15 +62,14 @@ Node {
                     var rgb = ledMatrixColors3D[x][y][z];
 
                     ledMatrixCube.setLedColor(x, y, z, rgb[0], rgb[1], rgb[2]);
-
                 }
             }
         }
 
-        ledMatrixCube.ledColors=ledMatrixCube.ledColors
-        
-        // console.log("LED colors updated.");
-        // console.log("LED colors:", ledMatrixCube.ledColors);
+        ledMatrixCube.ledColors = ledMatrixCube.ledColors;
+
+    // console.log("LED colors updated.");
+    // console.log("LED colors:", ledMatrixCube.ledColors);
 
     }
 
