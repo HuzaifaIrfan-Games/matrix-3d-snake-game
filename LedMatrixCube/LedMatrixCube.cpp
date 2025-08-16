@@ -24,47 +24,27 @@ signals:
     void colors3DChanged(const QVariantList &colors3d);
 };
 
-// Modify the createSampleColorArray function to ensure bright colors:
+// Create a 4D QVariantList: [x][y][z][c] where c=0(R),1(G),2(B)
 QVariantList createSampleColorArray(int size) {
-    QVariantList xArray;
+    QVariantList colorArray;
     for (int x = 0; x < size; x++) {
-        QVariantList yArray;
+        QVariantList xList;
         for (int y = 0; y < size; y++) {
-            QVariantList zArray;
+            QVariantList yList;
             for (int z = 0; z < size; z++) {
-                // Create more vibrant colors for better visibility
-                QColor color;
-                // Use random bright colors for better visibility
-                color.setRedF(QRandomGenerator::global()->generateDouble());
-                color.setGreenF(QRandomGenerator::global()->generateDouble());
-                color.setBlueF(QRandomGenerator::global()->generateDouble());
-                color.setAlphaF(QRandomGenerator::global()->generateDouble() * 0.5 + 0.3); // Keep some transparency
-
-                QVariantList colorMap;
-                colorMap.append(color.redF());
-                colorMap.append(color.greenF());
-                colorMap.append(color.blueF());
-                colorMap.append(color.alphaF());
-
-                
-                // // Convert to QVariantMap to ensure proper QML interpretation
-                // QVariantMap colorMap;
-                // colorMap["r"] = color.redF();
-                // colorMap["g"] = color.greenF();
-                // colorMap["b"] = color.blueF();
-                // colorMap["a"] = color.alphaF();
-                
-                zArray.append(colorMap);
+                QVariantList colorChannels;
+                for (int c = 0; c < 3; c++) {
+                    colorChannels.append(0.1 + QRandomGenerator::global()->generateDouble() * (1.0 - 0.1));
+                }
+                yList.append(colorChannels);
             }
-            yArray.append(zArray);
+            xList.append(yList);
         }
-        xArray.append(yArray);
+        colorArray.append(xList);
     }
-    
-    // Debug output to verify array structure
-    qDebug() << "Generated color array with size:" 
-             << xArray.size();
-    return xArray;
+
+    qDebug() << "Generated 4D color array with size:" << colorArray.size() << "x" << colorArray[0].toList().size() << "x3";
+    return colorArray;
 }
 
 int LedMatrixCubeMain(int argc, char *argv[]) {
