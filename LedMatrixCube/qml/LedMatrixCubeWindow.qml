@@ -1,8 +1,16 @@
 import QtQuick
 import QtQuick3D
 import QtQuick3D.Helpers
+import QtQuick.Controls.Material
+
 
 Window {
+    
+    // Force Material style (optional if set via env var)
+    Material.theme: Material.Dark
+    Material.accent: Material.Blue
+
+
     id: mainWindow
     width: 1200
     height: 800
@@ -140,9 +148,9 @@ Window {
             userInputController.handleKeyPress(event.key);
         }
 
-        Keys.onReleased: {
-            userInputController.handleKeyRelease(event.key);
-        }
+        // Keys.onReleased: {
+        //     userInputController.handleKeyRelease(event.key);
+        // }
     }
 
     function resetCameraDefaults() {
