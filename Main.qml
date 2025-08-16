@@ -10,13 +10,12 @@ Window {
     title: "matrix_3d_snake_game"
 
     property int gridSize: 5
-    property real ledSpacing: 50
-    property var ledColors: []
+    property real ledSpacing: 100
     property real moveSpeed: 15.0
     property real lookSpeed: 0.5
-    property vector3d cameraPosition: Qt.vector3d(250, 250, 200)
-    property real yaw: 46.5    // Left/right rotation
-    property real pitch: -39.0   // Up/down rotation
+    property vector3d cameraPosition: Qt.vector3d(700, 500, 300)
+    property real yaw: 55.0    // Left/right rotation
+    property real pitch: -30.0   // Up/down rotation
     property vector2d lastMousePos: Qt.vector2d(width/2, height/2)
     property bool mouseLookEnabled: false
 
@@ -29,24 +28,68 @@ Window {
     property bool moveDown: false
 
     Component.onCompleted: {
-        initializeColors()
         // Set initial mouse position
-        mouseArea.mouseX = width/2
-        mouseArea.mouseY = height/2
+        // mouseArea.mouseX = mainWindow.width/2
+        // mouseArea.mouseY = mainWindow.height/2
     }
 
-    function initializeColors() {
+    // 3D color array initialization
+    property var ledColors: initialize3DColorArray()
+
+    function initialize3DColorArray() {
+        var arr = []
+        for (var x = 0; x < gridSize; x++) {
+            arr[x] = []
+            for (var y = 0; y < gridSize; y++) {
+                arr[x][y] = []
+                for (var z = 0; z < gridSize; z++) {
+                    arr[x][y][z] = Qt.rgba(0.2, 0.2, 0.2, 0.3) // Default color
+                }
+            }
+        }
+        return arr
+    }
+
+    // Slot to receive 3D color array from C++
+    function setColors(colors3d) {
         var colors = []
+        var idx = 0
         for (var x = 0; x < gridSize; x++) {
             colors[x] = []
             for (var y = 0; y < gridSize; y++) {
                 colors[x][y] = []
                 for (var z = 0; z < gridSize; z++) {
-                    colors[x][y][z] = Qt.rgba(0.8, 0.8, 0.8, 0.3)
+                    // colors3d is a flat array of 500 floats: 125 RGBA tuples
+                    var r = colors3d[idx++]
+                    var g = colors3d[idx++]
+                    var b = colors3d[idx++]
+                    var a = colors3d[idx++]
+                    colors[x][y][z] = Qt.rgba(r, g, b, a)
                 }
             }
         }
         ledColors = colors
+    }
+
+    // ... [keep all your existing View3D, Repeater3D, and other code] ...
+
+    // Expose API to C++
+    property var ledCubeApi: QtObject {
+        // For C++ to call
+        function setColors(colors3d) {
+            // console.log(colors3d)
+            mainWindow.setColors(colors3d)
+        }
+
+        // For C++ to read
+        function getColor(x, y, z) {
+            if (x >= 0 && x < gridSize && 
+                y >= 0 && y < gridSize && 
+                z >= 0 && z < gridSize) {
+                return ledColors[x][y][z]
+            }
+            return Qt.rgba(0, 0, 0, 1)
+        }
     }
 
     // Game loop for smooth movement
@@ -54,7 +97,7 @@ Window {
         interval: 16 // ~60fps
         running: true
         repeat: true
-        onTriggered: updateCameraPosition()
+        onTriggered: mainWindow.updateCameraPosition()
     }
 
     function updateCameraPosition() {
@@ -100,7 +143,6 @@ Window {
                 case Qt.Key_Shift: moveDown = true; break
                 case Qt.Key_Escape:
                     mouseLookEnabled = false
-                    cursorShape = Qt.ArrowCursor
                     break
             }
         }
@@ -168,47 +210,117 @@ Window {
             eulerRotation: Qt.vector3d(pitch, yaw, 0)
         }
 
-        DirectionalLight {
-            eulerRotation.x: -30
-            eulerRotation.y: -70
-            brightness: 1
-            ambientColor: Qt.rgba(0.2, 0.2, 0.2, 1.0)
+        // Add a PointLight instead of another DirectionalLight or SpotLight
+        PointLight {
+            position: Qt.vector3d(800, 800, 800)
+            color: Qt.rgba(0.8, 0.9, 1.0, 1.0)
+            brightness: 2.0
+            constantFade: 1.0
+            linearFade: 0.0
+            quadraticFade: 0.01
+            castsShadow: false
+        }
+
+        // XYZ Axis visualization
+        Node {
+            // X Axis (Red)
+            Model {
+                source: "#Cube"
+                scale: Qt.vector3d( 1,0.05, 0.05)
+                position: Qt.vector3d(gridSize * ledSpacing / 2 + 150, 0, 0)
+                rotation: Qt.vector3d(90, 90, 90)
+                materials: PrincipledMaterial {
+                    baseColor: "red"
+                    emissiveFactor: 1.0
+                    roughness: 0.2
+                    metalness: 0.0
+                }
+            }
+            // Y Axis (Green)
+            Model {
+                source: "#Cube"
+                scale: Qt.vector3d( 0.05,1, 0.05)
+                position: Qt.vector3d(0, gridSize * ledSpacing / 2 + 150, 0)
+                rotation: Qt.vector3d(0, 0, 0)
+                materials: PrincipledMaterial {
+                    baseColor: "green"
+                    emissiveFactor: 1.0
+                    roughness: 0.2
+                    metalness: 0.0
+                }
+            }
+            // Z Axis (Blue)
+            Model {
+                source: "#Cube"
+                scale: Qt.vector3d(0.05, 0.05,1)
+                position: Qt.vector3d(0, 0, gridSize * ledSpacing / 2 + 150)
+                rotation: Qt.vector3d(0, 90, 0)
+                materials: PrincipledMaterial {
+                    baseColor: "blue"
+                    emissiveFactor: 1.0
+                    roughness: 0.2
+                    metalness: 0.0
+                }
+            }
         }
 
         // LED Cube
+        // LED Cube with Point Lights
         Node {
             Repeater3D {
                 model: gridSize // X axis
                 delegate: Node {
                     property int xPos: index
-
+                    
                     Repeater3D {
                         model: gridSize // Y axis
                         delegate: Node {
                             property int yPos: index
-
+                            
                             Repeater3D {
                                 model: gridSize // Z axis
-                                delegate: Model {
+                                delegate: Node {
                                     property int zPos: index
-
-                                    position: Qt.vector3d(
+                                    property vector3d ledPosition: Qt.vector3d(
                                         (xPos - (gridSize-1)/2) * ledSpacing,
                                         (yPos - (gridSize-1)/2) * ledSpacing,
                                         (zPos - (gridSize-1)/2) * ledSpacing
                                     )
-                                    source: "#Sphere"
-                                    scale: Qt.vector3d(0.4, 0.4, 0.4)
 
-                                    materials: PrincipledMaterial {
-                                        baseColor: ledColors[xPos] && ledColors[xPos][yPos] && ledColors[xPos][yPos][zPos]
-                                                ? ledColors[xPos][yPos][zPos]
-                                                : Qt.rgba(1, 1, 1, 0.3)
-                                        opacity: ledColors[xPos][yPos][zPos].a
-                                        alphaMode: PrincipledMaterial.Blend
-                                        emissiveFactor: 1.0
-                                        roughness: 0.0
-                                        metalness: 0.0
+                                    // The LED Sphere
+                                    Model {
+                                        position: ledPosition
+                                        source: "#Sphere"
+                                        scale: Qt.vector3d(0.4, 0.4, 0.4)
+                                        
+materials: PrincipledMaterial {
+    baseColor: {
+        if (ledColors && ledColors[xPos] && ledColors[xPos][yPos] && ledColors[xPos][yPos][zPos]) {
+            // Debug output to verify colors are received
+            // console.log("Color at", xPos, yPos, zPos, ":", ledColors[xPos][yPos][zPos]);
+            return ledColors[xPos][yPos][zPos];
+        } else {
+            console.warn("Invalid color access at", xPos, yPos, zPos);
+            return Qt.rgba(1, 0, 0, 1); // Fallback to red if error
+        }
+    }
+    emissiveFactor: 2.0
+    roughness: 0.0
+    metalness: 0.0
+    alphaMode: PrincipledMaterial.Blend
+    opacity: ledColors[xPos][yPos][zPos].a || 1.0
+}
+                                    }
+
+                                    // Point Light for this LED
+                                    PointLight {
+                                        position: ledPosition
+                                        color: ledColors[xPos][yPos][zPos]
+                                        brightness: 5
+                                        constantFade: 1.0
+                                        linearFade: 0.0
+                                        quadraticFade: 0.01
+                                        castsShadow: false
                                     }
                                 }
                             }
@@ -272,9 +384,9 @@ Window {
                 text: "Reset Camera"
                 width: parent.width
                 onClicked: {
-                    cameraPosition = Qt.vector3d(250, 250, 200)
-                    yaw = 46.5
-                    pitch = -39.0
+                    cameraPosition = Qt.vector3d(700, 500, 300)
+                    yaw = 55.0
+                    pitch = -30.0
                 }
             }
         }
