@@ -32,37 +32,37 @@ void game_reset(struct SnakeGame *game){
     game->ledMatrixColorsBuffer[0][0][2] = (ColorRGB){0, 0, 255};
 
 }
-void game_change_direction(struct SnakeGame *game, SnakeDirection snakeDirection){
+void game_change_snake_direction(struct SnakeGame *game, SnakeDirection snakeDirection){
 
-    printf("Current Snake direction: %s\n", snakeDirectionToString(game->direction));
+    printf("Current Snake direction: %s\n", snakeDirectionToString(game->snakeDirection));
 
-    if (game->direction == snakeDirection) {
-        return;
-    }
-
-    if (game->direction == DIR_X_POS && snakeDirection == DIR_X_NEG) {
-        return;
-    }
-    if (game->direction == DIR_X_NEG && snakeDirection == DIR_X_POS) {
+    if (game->snakeDirection == snakeDirection) {
         return;
     }
 
-    if (game->direction == DIR_Y_POS && snakeDirection == DIR_Y_NEG) {
+    if (game->snakeDirection == DIR_X_POS && snakeDirection == DIR_X_NEG) {
         return;
     }
-    if (game->direction == DIR_Y_NEG && snakeDirection == DIR_Y_POS) {
-        return;
-    }
-
-    if (game->direction == DIR_Z_POS && snakeDirection == DIR_Z_NEG) {
-        return;
-    }
-    if (game->direction == DIR_Z_NEG && snakeDirection == DIR_Z_POS) {
+    if (game->snakeDirection == DIR_X_NEG && snakeDirection == DIR_X_POS) {
         return;
     }
 
-    game->direction = snakeDirection;
-    printf("Changed Snake direction: %s\n", snakeDirectionToString(game->direction));
+    if (game->snakeDirection == DIR_Y_POS && snakeDirection == DIR_Y_NEG) {
+        return;
+    }
+    if (game->snakeDirection == DIR_Y_NEG && snakeDirection == DIR_Y_POS) {
+        return;
+    }
+
+    if (game->snakeDirection == DIR_Z_POS && snakeDirection == DIR_Z_NEG) {
+        return;
+    }
+    if (game->snakeDirection == DIR_Z_NEG && snakeDirection == DIR_Z_POS) {
+        return;
+    }
+
+    game->snakeDirection = snakeDirection;
+    printf("Changed Snake direction: %s\n", snakeDirectionToString(game->snakeDirection));
     return;
 }
 
@@ -76,7 +76,7 @@ void game_loop_tick(struct SnakeGame *game){
 SnakeGame newSnakeGame(void) {
     SnakeGame game = {0};
     game.reset = game_reset;
-    game.change_direction = game_change_direction;
+    game.change_snake_direction = game_change_snake_direction;
     game.loop_tick = game_loop_tick;
     return game;
 }

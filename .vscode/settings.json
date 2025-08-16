@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "*.moc": "cpp",
-        "qobject": "cpp",
-        "matrix3dsnakegame.h": "c",
-        "stdio.h": "c"
-    }
-}

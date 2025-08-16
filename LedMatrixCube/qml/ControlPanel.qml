@@ -94,11 +94,11 @@ Rectangle {
 
     function randomizeColors() {
         var colors3drgb = [];
-        for (var x = 0; x < ledMatrixCube.gridSize; x++) {
+        for (var x = 0; x < ledMatrixCube.matrixSize; x++) {
             colors3drgb[x] = [];
-            for (var y = 0; y < ledMatrixCube.gridSize; y++) {
+            for (var y = 0; y < ledMatrixCube.matrixSize; y++) {
                 colors3drgb[x][y] = [];
-                for (var z = 0; z < ledMatrixCube.gridSize; z++) {
+                for (var z = 0; z < ledMatrixCube.matrixSize; z++) {
                     // Generate random colors for each LED
                     colors3drgb[x][y][z] = [Math.random(), Math.random(), Math.random()];
                 }
@@ -109,11 +109,11 @@ Rectangle {
 
     function turnOnLights() {
         var colors3drgb = [];
-        for (var x = 0; x < ledMatrixCube.gridSize; x++) {
+        for (var x = 0; x < ledMatrixCube.matrixSize; x++) {
             colors3drgb[x] = [];
-            for (var y = 0; y < ledMatrixCube.gridSize; y++) {
+            for (var y = 0; y < ledMatrixCube.matrixSize; y++) {
                 colors3drgb[x][y] = [];
-                for (var z = 0; z < ledMatrixCube.gridSize; z++) {
+                for (var z = 0; z < ledMatrixCube.matrixSize; z++) {
                     colors3drgb[x][y][z] = [1, 1, 1];
                 }
             }
@@ -123,11 +123,11 @@ Rectangle {
 
     function turnOffLights() {
         var colors3drgb = [];
-        for (var x = 0; x < ledMatrixCube.gridSize; x++) {
+        for (var x = 0; x < ledMatrixCube.matrixSize; x++) {
             colors3drgb[x] = [];
-            for (var y = 0; y < ledMatrixCube.gridSize; y++) {
+            for (var y = 0; y < ledMatrixCube.matrixSize; y++) {
                 colors3drgb[x][y] = [];
-                for (var z = 0; z < ledMatrixCube.gridSize; z++) {
+                for (var z = 0; z < ledMatrixCube.matrixSize; z++) {
                     colors3drgb[x][y][z] = [0.0, 0.0, 0.0];
                 }
             }

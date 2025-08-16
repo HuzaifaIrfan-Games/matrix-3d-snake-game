@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef MATRIX_SIZE
+#define MATRIX_SIZE 5
+#endif
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -7,6 +10,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 typedef enum {
     DIR_X_POS,  // +X direction
@@ -26,35 +31,33 @@ typedef struct {
 } ColorRGB;
 
 
-#define MATRIX_SIZE 5
-
 
 typedef struct {
-    int x;
-    int y;
-    int z;
-} Position3D;
+    __uint8_t x;
+    __uint8_t y;
+    __uint8_t z;
+} SnakeNode;
 
 typedef struct {
-    Position3D positions[MATRIX_SIZE * MATRIX_SIZE * MATRIX_SIZE];
+    SnakeNode positions[MATRIX_SIZE * MATRIX_SIZE * MATRIX_SIZE];
     int length;
-    SnakeDirection direction;
+    SnakeDirection snakeDirection;
 } Snake;
 
 struct SnakeGame; // Forward declaration
 
 // Function prototype
 void game_reset(struct SnakeGame *game);
-void game_change_direction(struct SnakeGame *game, SnakeDirection snakeDirection);
+void game_change_snake_direction(struct SnakeGame *game, SnakeDirection snakeDirection);
 void game_loop_tick(struct SnakeGame *game);
 
 // Struct definition
 typedef struct SnakeGame {
     ColorRGB ledMatrixColorsBuffer[MATRIX_SIZE][MATRIX_SIZE][MATRIX_SIZE];
-    SnakeDirection direction;
+    SnakeDirection snakeDirection;
     unsigned char running;
     void (*reset)(struct SnakeGame *);
-    void (*change_direction)(struct SnakeGame * , SnakeDirection);
+    void (*change_snake_direction)(struct SnakeGame * , SnakeDirection);
     void (*loop_tick)(struct SnakeGame *);
 } SnakeGame;
 

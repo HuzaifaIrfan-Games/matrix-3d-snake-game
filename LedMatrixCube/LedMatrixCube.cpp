@@ -1,4 +1,6 @@
 
+#define MATRIX_SIZE 5
+
 #include "UserInputController.hpp"
 #include "LedMatrixCube.hpp"
 #include "Matrix3DSnakeGame/Matrix3DSnakeGame.h"
@@ -15,13 +17,13 @@
 SnakeGame snakeGame = newSnakeGame();
 
 // Create a 4D QVariantList: [x][y][z][c] where c=0(R),1(G),2(B)
-QVariantList createSampleLEDMatrixColorsFlattenArray(int size) {
+QVariantList createSampleLEDMatrixColorsFlattenArray() {
     QVariantList colorArray;
-    for (int x = 0; x < size; x++) {
+    for (int x = 0; x < MATRIX_SIZE; x++) {
         QVariantList xList;
-        for (int y = 0; y < size; y++) {
+        for (int y = 0; y < MATRIX_SIZE; y++) {
             QVariantList yList;
-            for (int z = 0; z < size; z++) {
+            for (int z = 0; z < MATRIX_SIZE; z++) {
                 QVariantList colorChannels;
                 for (int c = 0; c < 3; c++) {
                     colorChannels.append(0.1 + QRandomGenerator::global()->generateDouble() * (1.0 - 0.1));
@@ -87,7 +89,7 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     QObject *ledCubeApi = rootObject->property("ledCubeApi").value<QObject*>();
 
     // Create sample 3D color array (5x5x5)
-    QVariantList ledMatrixColorsFlatten = createSampleLEDMatrixColorsFlattenArray(5);
+    QVariantList ledMatrixColorsFlatten = createSampleLEDMatrixColorsFlattenArray();
     // Direct call through exposed API
     QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
         Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
@@ -123,9 +125,9 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
         gameTickTimer->stop();
     });
 
-    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection direction) {
+    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection snake_direction) {
         // qDebug() << "Game snake direction changed to:" << direction;
-        snakeGame.change_direction(&snakeGame, direction);
+        snakeGame.change_snake_direction(&snakeGame, snake_direction);
     });
 
 

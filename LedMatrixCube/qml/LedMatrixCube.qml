@@ -6,7 +6,7 @@ import QtQuick3D
 Node {
     id: ledMatrixCube
 
-    property int gridSize: 5
+    property int matrixSize: 5
     property real ledSpacing: 100
 
     // 3D color array initialization
@@ -14,11 +14,11 @@ Node {
 
     function initialize3DColorArray() {
         var tmpLedColors = [];
-        for (var x = 0; x < ledMatrixCube.gridSize; x++) {
+        for (var x = 0; x < ledMatrixCube.matrixSize; x++) {
             var y_arr = [];
-            for (var y = 0; y < ledMatrixCube.gridSize; y++) {
+            for (var y = 0; y < ledMatrixCube.matrixSize; y++) {
                 var z_arr = [];
-                for (var z = 0; z < ledMatrixCube.gridSize; z++) {
+                for (var z = 0; z < ledMatrixCube.matrixSize; z++) {
                     z_arr.push(Qt.rgba(0.0, 0.0, 0.0, 0.6));
                 }
                 y_arr.push(z_arr);
@@ -31,7 +31,7 @@ Node {
 
 
     function setLedColor(x,y,z,r,g,b) {
-        if (x >= 0 && x < ledMatrixCube.gridSize && y >= 0 && y < ledMatrixCube.gridSize && z >= 0 && z < ledMatrixCube.gridSize) {
+        if (x >= 0 && x < ledMatrixCube.matrixSize && y >= 0 && y < ledMatrixCube.matrixSize && z >= 0 && z < ledMatrixCube.matrixSize) {
 
             if (r < 0.3) {
                 r = 0.3;
@@ -54,9 +54,9 @@ Node {
 
     function setLedsColors(ledMatrixColors3D) {
         // console.log("Received colors3d:", colors3d);
-        for (var x = 0; x < ledMatrixCube.gridSize; x++) {
-            for (var y = 0; y < ledMatrixCube.gridSize; y++) {
-                for (var z = 0; z < ledMatrixCube.gridSize; z++) {
+        for (var x = 0; x < ledMatrixCube.matrixSize; x++) {
+            for (var y = 0; y < ledMatrixCube.matrixSize; y++) {
+                for (var z = 0; z < ledMatrixCube.matrixSize; z++) {
                     // ledMatrixColors3D[x][y][z] = [r, g, b]
                     var rgb = ledMatrixColors3D[x][y][z];
 
@@ -74,20 +74,20 @@ Node {
     }
 
     Repeater3D {
-        model: ledMatrixCube.gridSize // X axis
+        model: ledMatrixCube.matrixSize // X axis
         delegate: Node {
             property int xPos: index
 
             Repeater3D {
-                model: ledMatrixCube.gridSize // Y axis
+                model: ledMatrixCube.matrixSize // Y axis
                 delegate: Node {
                     property int yPos: index
 
                     Repeater3D {
-                        model: ledMatrixCube.gridSize // Z axis
+                        model: ledMatrixCube.matrixSize // Z axis
                         delegate: Node {
                             property int zPos: index
-                            property vector3d ledPosition: Qt.vector3d((xPos - (ledMatrixCube.gridSize - 1) / 2) * ledMatrixCube.ledSpacing, (yPos - (ledMatrixCube.gridSize - 1) / 2) * ledMatrixCube.ledSpacing, (zPos - (ledMatrixCube.gridSize - 1) / 2) * ledMatrixCube.ledSpacing)
+                            property vector3d ledPosition: Qt.vector3d((xPos - (ledMatrixCube.matrixSize - 1) / 2) * ledMatrixCube.ledSpacing, (yPos - (ledMatrixCube.matrixSize - 1) / 2) * ledMatrixCube.ledSpacing, (zPos - (ledMatrixCube.matrixSize - 1) / 2) * ledMatrixCube.ledSpacing)
 
                             // The LED Sphere
                             Model {

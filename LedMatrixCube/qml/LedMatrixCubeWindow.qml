@@ -21,14 +21,14 @@ Window {
         function setLEDMatrixColorsFlatten(ledMatrixColorsFlatten) {
             // console.log(colors3d)
             // Convert flattened RGB array to 4D array [x][y][z][rgba]
-            let gridSize = ledMatrixCube.gridSize;
+            let matrixSize = ledMatrixCube.matrixSize;
             let ledMatrixColors3D = [];
             let idx = 0;
-            for (let x = 0; x < gridSize; ++x) {
+            for (let x = 0; x < matrixSize; ++x) {
                 ledMatrixColors3D[x] = [];
-                for (let y = 0; y < gridSize; ++y) {
+                for (let y = 0; y < matrixSize; ++y) {
                     ledMatrixColors3D[x][y] = [];
-                    for (let z = 0; z < gridSize; ++z) {
+                    for (let z = 0; z < matrixSize; ++z) {
                         let r = ledMatrixColorsFlatten[idx++];
                         let g = ledMatrixColorsFlatten[idx++];
                         let b = ledMatrixColorsFlatten[idx++];
@@ -42,7 +42,7 @@ Window {
 
         // For C++ to read
         function getColor(x, y, z) {
-            if (x >= 0 && x < ledMatrixCube.gridSize && y >= 0 && y < ledMatrixCube.gridSize && z >= 0 && z < ledMatrixCube.gridSize) {
+            if (x >= 0 && x < ledMatrixCube.matrixSize && y >= 0 && y < ledMatrixCube.matrixSize && z >= 0 && z < ledMatrixCube.matrixSize) {
                 return ledMatrixCube.ledColors[x][y][z];
             }
             return Qt.rgba(0, 0, 0, 1);
@@ -86,7 +86,7 @@ Window {
             Model {
                 source: "#Cube"
                 scale: Qt.vector3d(1, 0.05, 0.05)
-                position: Qt.vector3d(ledMatrixCube.gridSize * ledMatrixCube.ledSpacing / 2 + 150, 0, 0)
+                position: Qt.vector3d(ledMatrixCube.matrixSize * ledMatrixCube.ledSpacing / 2 + 150, 0, 0)
                 rotation: Qt.vector3d(90, 90, 90)
                 materials: PrincipledMaterial {
                     baseColor: "red"
@@ -98,7 +98,7 @@ Window {
             Model {
                 source: "#Cube"
                 scale: Qt.vector3d(0.05, 1, 0.05)
-                position: Qt.vector3d(0, ledMatrixCube.gridSize * ledMatrixCube.ledSpacing / 2 + 150, 0)
+                position: Qt.vector3d(0, ledMatrixCube.matrixSize * ledMatrixCube.ledSpacing / 2 + 150, 0)
                 rotation: Qt.vector3d(0, 0, 0)
                 materials: PrincipledMaterial {
                     baseColor: "green"
@@ -110,7 +110,7 @@ Window {
             Model {
                 source: "#Cube"
                 scale: Qt.vector3d(0.05, 0.05, 1)
-                position: Qt.vector3d(0, 0, ledMatrixCube.gridSize * ledMatrixCube.ledSpacing / 2 + 150)
+                position: Qt.vector3d(0, 0, ledMatrixCube.matrixSize * ledMatrixCube.ledSpacing / 2 + 150)
                 rotation: Qt.vector3d(0, 90, 0)
                 materials: PrincipledMaterial {
                     baseColor: "blue"
