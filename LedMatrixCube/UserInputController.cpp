@@ -14,31 +14,31 @@ void UserInputController::handleKeyPress(Qt::Key key)
     // Update the snake direction based on the key pressed
     switch (key)
     {
-    case Qt::Key_I:
+    case Qt::Key_8:
         emit gameSnakeDirectionChanged(DIR_Z_NEG);
         break;
-    case Qt::Key_K:
+    case Qt::Key_5:
         emit gameSnakeDirectionChanged(DIR_Z_POS);
         break;
 
-    case Qt::Key_J:
+    case Qt::Key_4:
         emit gameSnakeDirectionChanged(DIR_X_NEG);
         break;
-    case Qt::Key_L:;
+    case Qt::Key_6:
         emit gameSnakeDirectionChanged(DIR_X_POS);
         break;
 
-    case Qt::Key_Insert:
+    case Qt::Key_O:
         emit gameSnakeDirectionChanged(DIR_Y_POS);
         break;
-    case Qt::Key_Delete:
+    case Qt::Key_L:
         emit gameSnakeDirectionChanged(DIR_Y_NEG);
         break;
 
-    case Qt::Key_Home:
+    case Qt::Key_Return:
         emit gameResetPressed();
         break;
-    case Qt::Key_End:
+    case Qt::Key_Backspace:
         emit gameStopPressed();
         break;
     }

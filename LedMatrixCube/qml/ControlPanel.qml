@@ -81,17 +81,17 @@ Rectangle {
         }
 
         Label {
-            text: "Home/End: Start/Stop"
+            text: "Return/Backspace: Start/Stop"
             color: "white"
         }
 
         Label {
-            text: "IJKL Snake Move"
+            text: "8456 Snake Move"
             color: "white"
         }
 
         Label {
-            text: "Insert/Delete: Snake Move Z"
+            text: "O/L: Snake Move Z"
             color: "white"
         }
 
