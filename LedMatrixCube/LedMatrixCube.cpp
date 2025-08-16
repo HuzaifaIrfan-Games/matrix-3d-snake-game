@@ -35,6 +35,24 @@ QVariantList createSampleLEDMatrixColorsFlattenArray(int size) {
 }
 
 
+QVariantList getLEDMatrix3DBufferFlatten(){
+
+    QVariantList bufferList;
+    // for (int x = 0; x < MATRIX_SIZE; x++) {
+    //     for (int y = 0; y < MATRIX_SIZE; y++) {
+    //         for (int z = 0; z < MATRIX_SIZE; z++) {
+    //             auto color = matrix3DBuffer.buffer[x][y][z];
+    //             QVariantList colorChannels;
+    //             colorChannels.append(color.r);
+    //             colorChannels.append(color.g);
+    //             colorChannels.append(color.b);
+    //             bufferList.append(colorChannels);
+    //         }
+    //     }
+    // }
+    return bufferList;
+}
+
 
 
 
@@ -66,9 +84,17 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     // Direct call through exposed API
     QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
         Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
-    
 
-    
+
+    QVariantList ledMatrix3DBufferFlatten = getLEDMatrix3DBufferFlatten();
+    // Direct call through exposed API
+    QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
+        Q_ARG(QVariant, QVariant::fromValue(ledMatrix3DBufferFlatten)));
+
+
+
+
+
 
 
 

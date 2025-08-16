@@ -33,9 +33,9 @@ qt_add_qml_module(matrix_3d_snake_game_app
     URI matrix_3d_snake_game
     VERSION 1.0
     QML_FILES
-        LedMatrixCube/LedMatrixCube.qml
-        LedMatrixCube/LedMatrixCubeWindow.qml
-        LedMatrixCube/ControlPanel.qml
+        LedMatrixCube/qml/LedMatrixCube.qml
+        LedMatrixCube/qml/LedMatrixCubeWindow.qml
+        LedMatrixCube/qml/ControlPanel.qml
 )
 
 # macOS/iOS Bundle Settings (unchanged)

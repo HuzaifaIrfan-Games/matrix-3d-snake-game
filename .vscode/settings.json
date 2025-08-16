@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "*.moc": "cpp"
+        "*.moc": "cpp",
+        "qobject": "cpp"
     }
 }

@@ -128,7 +128,8 @@ Window {
     WasdController {
         controlledObject: camera
         enabled: true
-        acceptedButtons: Qt.Key_W | Qt.Key_A | Qt.Key_S | Qt.Key_D | Qt.Key_R | Qt.Key_F
+        // acceptedButtons: Qt.Key_W | Qt.Key_A | Qt.Key_S | Qt.Key_D | Qt.Key_R | Qt.Key_F
+
         Keys.onPressed: {
             userInputController.handleKeyPress(event.key)
         }
