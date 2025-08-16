@@ -2,6 +2,7 @@
 
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,6 +17,7 @@ typedef enum {
     DIR_Z_NEG   // -Z direction
 } SnakeDirection;
 
+const char* snakeDirectionToString(SnakeDirection direction);
 
 typedef struct {
     unsigned char r: 8; // Red component (0-255)
@@ -49,6 +51,8 @@ void game_loop_tick(struct SnakeGame *game);
 // Struct definition
 typedef struct SnakeGame {
     ColorRGB ledMatrixColorsBuffer[MATRIX_SIZE][MATRIX_SIZE][MATRIX_SIZE];
+    SnakeDirection direction;
+    unsigned char running;
     void (*reset)(struct SnakeGame *);
     void (*change_direction)(struct SnakeGame * , SnakeDirection);
     void (*loop_tick)(struct SnakeGame *);
@@ -57,8 +61,7 @@ typedef struct SnakeGame {
 // Constructor-like init
 SnakeGame newSnakeGame(void);
 
-// Function to start the game
-void start_game();
+
 
 #ifdef __cplusplus
 }

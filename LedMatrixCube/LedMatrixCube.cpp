@@ -64,7 +64,7 @@ QVariantList getLEDMatrixColorsBufferFlatten(){
 
 
 int LedMatrixCubeMain(int argc, char *argv[]) {
-    start_game();
+
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
@@ -99,19 +99,6 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     //     Q_ARG(QVariant, QVariant::fromValue(ledMatrix3DBufferFlatten)));
 
 
-    // Connect UserInputController signals to game logic
-    QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]() {
-        // qDebug() << "Game reset requested";
-        snakeGame.reset(&snakeGame);
-    });
-
-    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection direction) {
-        // qDebug() << "Game snake direction changed to:" << direction;
-        snakeGame.change_direction(&snakeGame, direction);
-    });
-
-
-
     // Create a QTimer for game ticks
     QTimer *gameTickTimer = new QTimer(&app);
     QObject::connect(gameTickTimer, &QTimer::timeout, [&]() {
@@ -120,7 +107,27 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
         QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
             Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsBufferFlatten)));
     });
-    gameTickTimer->start(1000); // Tick every 150 ms
+
+
+
+
+    // Connect UserInputController signals to game logic
+    QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]() {
+        qDebug() << "Game reset requested";
+        snakeGame.reset(&snakeGame);
+        gameTickTimer->start(1000); // Tick every 1000 ms
+    });
+
+    QObject::connect(&userInputController, &UserInputController::gameStopPressed, [&]() {
+        qDebug() << "Game stop requested";
+        gameTickTimer->stop();
+    });
+
+    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection direction) {
+        // qDebug() << "Game snake direction changed to:" << direction;
+        snakeGame.change_direction(&snakeGame, direction);
+    });
+
 
 
 

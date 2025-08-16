@@ -42,7 +42,7 @@ Rectangle {
         }
 
         Label {
-            text: "WASD: Move\nLeft Click + Drag: Look\n"
+            text: "WASD RF: Move\nLeft Click + Drag: Look"
             color: "white"
         }
 
@@ -67,6 +67,29 @@ Rectangle {
                 mainWindow.resetCameraDefaults();
             }
         }
+
+
+        Label {
+            text: "Game Controls:"
+            font.bold: true
+            color: "white"
+        }
+
+        Label {
+            text: "Home/End: Start/Stop"
+            color: "white"
+        }
+
+        Label {
+            text: "IJKL Snake Move"
+            color: "white"
+        }
+
+        Label {
+            text: "Insert/Delete: Snake Move Z"
+            color: "white"
+        }
+
     }
 
     function randomizeColors() {
