@@ -1,5 +1,7 @@
 
+
 #include "LedMatrixCube.hpp"
+#include "Matrix3DSnakeGame/Matrix3DSnakeGame.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -66,6 +68,7 @@ QVariantList createSampleColorArray(int size) {
 }
 
 int LedMatrixCubeMain(int argc, char *argv[]) {
+    start_game();
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
