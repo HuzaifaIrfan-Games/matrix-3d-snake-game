@@ -16,7 +16,8 @@
 
 
 # 📦 Release
-- 
+- [v0.1](https://github.com/HuzaifaIrfan-Games/matrix_3d_snake_game/releases)
+
 
 # 🛠️ Development
 
