@@ -1,5 +1,5 @@
 
-
+#include "UserInputController.hpp"
 #include "LedMatrixCube.hpp"
 #include "Matrix3DSnakeGame/Matrix3DSnakeGame.h"
 
@@ -11,21 +11,8 @@
 #include <QVariantList>
 #include <QRandomGenerator>
 
-class LedCubeController : public QObject {
-    Q_OBJECT
-public:
-    explicit LedCubeController(QObject *parent = nullptr) : QObject(parent) {}
-    
-    Q_INVOKABLE void setColors3D(const QVariantList &colors3d) {
-        emit colors3DChanged(colors3d);
-    }
-
-signals:
-    void colors3DChanged(const QVariantList &colors3d);
-};
-
 // Create a 4D QVariantList: [x][y][z][c] where c=0(R),1(G),2(B)
-QVariantList createSampleColorArray(int size) {
+QVariantList createSampleLEDMatrixColorsFlattenArray(int size) {
     QVariantList colorArray;
     for (int x = 0; x < size; x++) {
         QVariantList xList;
@@ -47,16 +34,20 @@ QVariantList createSampleColorArray(int size) {
     return colorArray;
 }
 
+
+
+
+
 int LedMatrixCubeMain(int argc, char *argv[]) {
     start_game();
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    
-    // Register our controller
-    LedCubeController ledController;
-    engine.rootContext()->setContextProperty("ledController", &ledController);
-    
+
+    // Register the controller
+    UserInputController userInputController;
+    engine.rootContext()->setContextProperty("userInputController", &userInputController);
+
     // Load QML
     QObject::connect(
         &engine,
@@ -71,23 +62,15 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     QObject *ledCubeApi = rootObject->property("ledCubeApi").value<QObject*>();
 
     // Create sample 3D color array (5x5x5)
-    QVariantList colors3d = createSampleColorArray(5);
+    QVariantList ledMatrixColorsFlatten = createSampleLEDMatrixColorsFlattenArray(5);
+    // Direct call through exposed API
+    QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
+        Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
+    
 
-    // Set colors from C++ (two equivalent ways)
     
-    // Method 1: Direct call through exposed API
-    QMetaObject::invokeMethod(ledCubeApi, "setColors",
-        Q_ARG(QVariant, QVariant::fromValue(colors3d)));
-    
-    // Method 2: Via signal/slot connection
-    QObject::connect(&ledController, &LedCubeController::colors3DChanged,
-        [rootObject](const QVariantList &colors) {
-            QMetaObject::invokeMethod(rootObject, "setColors",
-                Q_ARG(QVariant, QVariant::fromValue(colors)));
-        });
-    
-    // You can trigger updates later using:
-    ledController.setColors3D(colors3d);
+
+
 
     return app.exec();
 }

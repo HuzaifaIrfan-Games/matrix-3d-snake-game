@@ -3,6 +3,7 @@ import QtQuick.Controls
 
 // Control panel
 Rectangle {
+    id: controlPanel
     width: 300
     height: parent.height
     color: "#80000000"
@@ -19,19 +20,19 @@ Rectangle {
         Button {
             text: "Random Colors"
             width: parent.width
-            onClicked: randomizeColors()
+            onClicked: controlPanel.randomizeColors()
         }
 
         Button {
             text: "Turn On"
             width: parent.width
-            onClicked: turnOnLights()
+            onClicked: controlPanel.turnOnLights()
         }
 
         Button {
             text: "Turn Off"
             width: parent.width
-            onClicked: turnOffLights()
+            onClicked: controlPanel.turnOffLights()
         }
 
         Label {
@@ -63,7 +64,7 @@ Rectangle {
             text: "Reset Camera"
             width: parent.width
             onClicked: {
-                resetCameraDefaults();
+                mainWindow.resetCameraDefaults();
             }
         }
     }
@@ -80,7 +81,7 @@ Rectangle {
                 }
             }
         }
-        ledMatrixCube.setColors(colors3drgb);
+        ledMatrixCube.setLedsColors(colors3drgb);
     }
 
     function turnOnLights() {
@@ -94,7 +95,7 @@ Rectangle {
                 }
             }
         }
-        ledMatrixCube.setColors(colors3drgb);
+        ledMatrixCube.setLedsColors(colors3drgb);
     }
 
     function turnOffLights() {
@@ -108,6 +109,6 @@ Rectangle {
                 }
             }
         }
-        ledMatrixCube.setColors(colors3drgb);
+        ledMatrixCube.setLedsColors(colors3drgb);
     }
 }

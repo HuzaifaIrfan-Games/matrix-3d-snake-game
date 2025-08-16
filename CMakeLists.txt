@@ -19,6 +19,7 @@ add_library(matrix_3d_snake_game_c STATIC
 qt_add_executable(matrix_3d_snake_game_app
     main.cpp
     LedMatrixCube/LedMatrixCube.cpp
+    LedMatrixCube/UserInputController.cpp
 )
 
 # Link the C library to the Qt executable

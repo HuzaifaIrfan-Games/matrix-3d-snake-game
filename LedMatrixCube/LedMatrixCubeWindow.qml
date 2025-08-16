@@ -9,7 +9,7 @@ Window {
     // visibility: Window.FullScreen
     visible: true
     title: "matrix_3d_snake_game"
-
+    
     property vector3d defaultCameraPosition: Qt.vector3d(700, 500, 300)
     property real defaultYaw: 55.0    // Left/right rotation
     property real defaultPitch: -30.0   // Up/down rotation
@@ -18,26 +18,26 @@ Window {
     property var ledCubeApi: QtObject {
 
         // Slot to receive 4D color array from C++
-        function setColors(colors3d) {
+        function setLEDMatrixColorsFlatten(ledMatrixColorsFlatten) {
             // console.log(colors3d)
             // Convert flattened RGB array to 4D array [x][y][z][rgba]
             let gridSize = ledMatrixCube.gridSize;
-            let colors3drgb = [];
+            let ledMatrixColors3D = [];
             let idx = 0;
             for (let x = 0; x < gridSize; ++x) {
-                colors3drgb[x] = [];
+                ledMatrixColors3D[x] = [];
                 for (let y = 0; y < gridSize; ++y) {
-                    colors3drgb[x][y] = [];
+                    ledMatrixColors3D[x][y] = [];
                     for (let z = 0; z < gridSize; ++z) {
-                        let r = colors3d[idx++];
-                        let g = colors3d[idx++];
-                        let b = colors3d[idx++];
-                        colors3drgb[x][y][z] = [r, g, b];
+                        let r = ledMatrixColorsFlatten[idx++];
+                        let g = ledMatrixColorsFlatten[idx++];
+                        let b = ledMatrixColorsFlatten[idx++];
+                        ledMatrixColors3D[x][y][z] = [r, g, b];
                     }
                 }
             }
 
-            ledMatrixCube.setColors(colors3drgb);
+            ledMatrixCube.setLedsColors(ledMatrixColors3D);
         }
 
         // For C++ to read
@@ -52,6 +52,9 @@ Window {
     View3D {
         id: view3d
         anchors.fill: parent
+
+
+
 
         environment: SceneEnvironment {
             clearColor: "#111111"
@@ -124,7 +127,18 @@ Window {
 
     WasdController {
         controlledObject: camera
+        enabled: true
+        acceptedButtons: Qt.Key_W | Qt.Key_A | Qt.Key_S | Qt.Key_D | Qt.Key_R | Qt.Key_F
+        Keys.onPressed: {
+            userInputController.handleKeyPress(event.key)
+        }
+
+        Keys.onReleased: {
+            userInputController.handleKeyRelease(event.key)
+        }
     }
+
+
 
     function resetCameraDefaults() {
         camera.position = defaultCameraPosition;
