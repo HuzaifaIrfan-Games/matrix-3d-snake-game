@@ -12,6 +12,11 @@ Rectangle {
     // anchors.bottom: parent.bottom
     anchors.margins: 20
 
+property var game_info: "Game Info"  
+ property var game_score: 0
+ property var snake_length: 0
+
+
     Column {
         anchors.fill: parent
         anchors.margins: 10
@@ -90,6 +95,26 @@ Rectangle {
             color: "white"
         }
 
+
+        Label {
+            text: "Game "
+            font.bold: true
+            color: "white"
+        }
+        Label {
+            text: "Info: " + controlPanel.game_info
+            color: "white"
+        }
+        Label {
+            text: "Score: " + controlPanel.game_score
+            color: "white"
+        }
+        Label {
+            text: "Snake Length: " + controlPanel.snake_length
+            color: "white"
+        }
+
+
     }
 
     function randomizeColors() {
@@ -133,5 +158,11 @@ Rectangle {
             }
         }
         ledMatrixCube.setLedsColors(colors3drgb);
+    }
+    
+    function setGameInfo(tmp_game_info, tmp_game_score, tmp_snake_length) {
+        controlPanel.game_info = tmp_game_info;
+        controlPanel.game_score = tmp_game_score;
+        controlPanel.snake_length = tmp_snake_length;
     }
 }

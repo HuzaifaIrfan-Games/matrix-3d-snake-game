@@ -6,7 +6,7 @@ import QtQuick3D
 Node {
     id: ledMatrixCube
 
-    property int matrixSize: 6
+    property int matrixSize: 5
     property real ledSpacing: 100
 
     // 3D color array initialization

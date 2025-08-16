@@ -47,6 +47,10 @@ Window {
             }
             return Qt.rgba(0, 0, 0, 1);
         }
+
+        function setGameInfo(game_info, game_score, snake_length) {
+            controlPanel.setGameInfo(game_info, game_score, snake_length);
+        }
     }
 
     View3D {
@@ -146,5 +150,5 @@ Window {
         camera.eulerRotation = Qt.vector3d(defaultPitch, defaultYaw, 0);
     }
 
-    ControlPanel {}
+    ControlPanel { id: controlPanel }
 }

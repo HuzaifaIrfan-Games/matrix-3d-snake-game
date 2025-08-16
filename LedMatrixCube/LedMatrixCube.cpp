@@ -1,4 +1,5 @@
 
+#define GAME_TICK_INTERVAL 2000
 
 #include "UserInputController.hpp"
 #include "LedMatrixCube.hpp"
@@ -12,6 +13,8 @@
 #include <QVariantList>
 #include <QRandomGenerator>
 #include <QTimer>
+#include <QMetaObject>
+#include <QString>
 
 SnakeGame snakeGame = newSnakeGame();
 
@@ -104,6 +107,21 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     QTimer *gameTickTimer = new QTimer(&app);
     QObject::connect(gameTickTimer, &QTimer::timeout, [&]() {
         snakeGame.loop_tick(&snakeGame); // Advance game logic
+
+        if (snakeGame.running) {
+
+        QMetaObject::invokeMethod(ledCubeApi, "setGameInfo",
+            Q_ARG(QVariant, QVariant::fromValue(QString::fromStdString(snakeDirectionToString(snakeGame.snake.direction)))),
+            Q_ARG(QVariant, QVariant::fromValue(snakeGame.score)),
+            Q_ARG(QVariant, QVariant::fromValue(snakeGame.snake.length)));
+
+        }else{
+            QMetaObject::invokeMethod(ledCubeApi, "setGameInfo",
+            Q_ARG(QVariant, QVariant::fromValue(QString::fromStdString("GameOver"))),
+            Q_ARG(QVariant, QVariant::fromValue(snakeGame.score)),
+            Q_ARG(QVariant, QVariant::fromValue(snakeGame.snake.length)));
+        }
+
         QVariantList ledMatrixColorsBufferFlatten = getLEDMatrixColorsBufferFlatten();
         QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
             Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsBufferFlatten)));
@@ -116,7 +134,7 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
     QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]() {
         qDebug() << "Game reset requested";
         snakeGame.reset(&snakeGame);
-        gameTickTimer->start(1000); // Tick every 1000 ms
+        gameTickTimer->start(GAME_TICK_INTERVAL); // Tick every  ms
     });
 
     QObject::connect(&userInputController, &UserInputController::gameStopPressed, [&]() {

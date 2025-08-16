@@ -28,10 +28,10 @@ void UserInputController::handleKeyPress(Qt::Key key)
     case Qt::Key_L:;
         emit gameSnakeDirectionChanged(DIR_X_POS);
         break;
-    case Qt::Key_Insert:
+    case Qt::Key_Delete:
         emit gameSnakeDirectionChanged(DIR_Z_POS);
         break;
-    case Qt::Key_Delete:
+    case Qt::Key_Insert:
         emit gameSnakeDirectionChanged(DIR_Z_NEG);
         break;
 
