@@ -353,6 +353,20 @@ materials: PrincipledMaterial {
                 onClicked: randomizeColors()
             }
 
+            Button {
+                text: "Turn On"
+                width: parent.width
+                onClicked: turnOnLights()
+            }
+
+
+            Button {
+                text: "Turn Off"
+                width: parent.width
+                onClicked: turnOffLights()
+            }
+
+
             Label {
                 text: "Camera Controls:"
                 font.bold: true
@@ -392,6 +406,9 @@ materials: PrincipledMaterial {
         }
     }
 
+
+
+
     function randomizeColors() {
         var colors = []
         for (var x = 0; x < gridSize; x++) {
@@ -403,7 +420,41 @@ materials: PrincipledMaterial {
                         Math.random(),
                         Math.random(),
                         Math.random(),
-                        Math.random() * 0.5 + 0.3 // Keep some transparency
+                        0.5 // Keep some transparency
+                    )
+                }
+            }
+        }
+        ledColors = colors
+    }
+
+
+    function turnOnLights() {
+        var colors = []
+        for (var x = 0; x < gridSize; x++) {
+            colors[x] = []
+            for (var y = 0; y < gridSize; y++) {
+                colors[x][y] = []
+                for (var z = 0; z < gridSize; z++) {
+                    colors[x][y][z] = Qt.rgba(
+                        1, 1, 1, 1 // Keep some transparency
+                    )
+                }
+            }
+        }
+        ledColors = colors
+    }
+
+
+    function turnOffLights() {
+        var colors = []
+        for (var x = 0; x < gridSize; x++) {
+            colors[x] = []
+            for (var y = 0; y < gridSize; y++) {
+                colors[x][y] = []
+                for (var z = 0; z < gridSize; z++) {
+                    colors[x][y][z] = Qt.rgba(
+                        0.3,0.3,0.3,0.5 // Keep some transparency
                     )
                 }
             }
