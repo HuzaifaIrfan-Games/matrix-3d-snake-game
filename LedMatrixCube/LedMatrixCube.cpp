@@ -10,6 +10,9 @@
 #include <QVariant>
 #include <QVariantList>
 #include <QRandomGenerator>
+#include <QTimer>
+
+SnakeGame snakeGame = newSnakeGame();
 
 // Create a 4D QVariantList: [x][y][z][c] where c=0(R),1(G),2(B)
 QVariantList createSampleLEDMatrixColorsFlattenArray(int size) {
@@ -35,21 +38,25 @@ QVariantList createSampleLEDMatrixColorsFlattenArray(int size) {
 }
 
 
-QVariantList getLEDMatrix3DBufferFlatten(){
+QVariantList getLEDMatrixColorsBufferFlatten(){
 
     QVariantList bufferList;
-    // for (int x = 0; x < MATRIX_SIZE; x++) {
-    //     for (int y = 0; y < MATRIX_SIZE; y++) {
-    //         for (int z = 0; z < MATRIX_SIZE; z++) {
-    //             auto color = matrix3DBuffer.buffer[x][y][z];
-    //             QVariantList colorChannels;
-    //             colorChannels.append(color.r);
-    //             colorChannels.append(color.g);
-    //             colorChannels.append(color.b);
-    //             bufferList.append(colorChannels);
-    //         }
-    //     }
-    // }
+    for (int x = 0; x < MATRIX_SIZE; x++) {
+        for (int y = 0; y < MATRIX_SIZE; y++) {
+            for (int z = 0; z < MATRIX_SIZE; z++) {
+                ColorRGB color = snakeGame.ledMatrixColorsBuffer[x][y][z];
+                float r = color.r / 255.0f;
+                float g = color.g / 255.0f;
+                float b = color.b / 255.0f;
+
+                QVariantList colorChannels;
+                colorChannels.append(r);
+                colorChannels.append(g);
+                colorChannels.append(b);
+                bufferList.append(colorChannels);
+            }
+        }
+    }
     return bufferList;
 }
 
@@ -86,14 +93,34 @@ int LedMatrixCubeMain(int argc, char *argv[]) {
         Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsFlatten)));
 
 
-    QVariantList ledMatrix3DBufferFlatten = getLEDMatrix3DBufferFlatten();
-    // Direct call through exposed API
-    QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
-        Q_ARG(QVariant, QVariant::fromValue(ledMatrix3DBufferFlatten)));
+    // QVariantList ledMatrix3DBufferFlatten = getLEDMatrix3DBufferFlatten();
+    // // Direct call through exposed API
+    // QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
+    //     Q_ARG(QVariant, QVariant::fromValue(ledMatrix3DBufferFlatten)));
+
+
+    // Connect UserInputController signals to game logic
+    QObject::connect(&userInputController, &UserInputController::gameResetPressed, [&]() {
+        // qDebug() << "Game reset requested";
+        snakeGame.reset(&snakeGame);
+    });
+
+    QObject::connect(&userInputController, &UserInputController::gameSnakeDirectionChanged, [&](SnakeDirection direction) {
+        // qDebug() << "Game snake direction changed to:" << direction;
+        snakeGame.change_direction(&snakeGame, direction);
+    });
 
 
 
-
+    // Create a QTimer for game ticks
+    QTimer *gameTickTimer = new QTimer(&app);
+    QObject::connect(gameTickTimer, &QTimer::timeout, [&]() {
+        snakeGame.loop_tick(&snakeGame); // Advance game logic
+        QVariantList ledMatrixColorsBufferFlatten = getLEDMatrixColorsBufferFlatten();
+        QMetaObject::invokeMethod(ledCubeApi, "setLEDMatrixColorsFlatten",
+            Q_ARG(QVariant, QVariant::fromValue(ledMatrixColorsBufferFlatten)));
+    });
+    gameTickTimer->start(1000); // Tick every 150 ms
 
 
 

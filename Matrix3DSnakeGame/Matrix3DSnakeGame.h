@@ -1,5 +1,5 @@
-
 #pragma once
+
 
 #include <stdio.h>
 
@@ -26,12 +26,36 @@ typedef struct {
 
 #define MATRIX_SIZE 5
 
-// struct {
-//     ColorRGB ledMatrixBuffer[MATRIX_SIZE][MATRIX_SIZE][MATRIX_SIZE];
-// } snakeGame;
 
-// Matrix3DBuffer matrix3DBuffer;
+typedef struct {
+    int x;
+    int y;
+    int z;
+} Position3D;
 
+typedef struct {
+    Position3D positions[MATRIX_SIZE * MATRIX_SIZE * MATRIX_SIZE];
+    int length;
+    SnakeDirection direction;
+} Snake;
+
+struct SnakeGame; // Forward declaration
+
+// Function prototype
+void game_reset(struct SnakeGame *game);
+void game_change_direction(struct SnakeGame *game, SnakeDirection snakeDirection);
+void game_loop_tick(struct SnakeGame *game);
+
+// Struct definition
+typedef struct SnakeGame {
+    ColorRGB ledMatrixColorsBuffer[MATRIX_SIZE][MATRIX_SIZE][MATRIX_SIZE];
+    void (*reset)(struct SnakeGame *);
+    void (*change_direction)(struct SnakeGame * , SnakeDirection);
+    void (*loop_tick)(struct SnakeGame *);
+} SnakeGame;
+
+// Constructor-like init
+SnakeGame newSnakeGame(void);
 
 // Function to start the game
 void start_game();

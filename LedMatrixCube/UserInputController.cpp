@@ -17,43 +17,25 @@ void UserInputController::handleKeyPress(Qt::Key key)
     // Update the snake direction based on the key pressed
     switch (key) {
     case Qt::Key_I:
-        if (currentSnakeDirection != DIR_Y_NEG) {
-            currentSnakeDirection = DIR_Y_POS;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+        emit gameSnakeDirectionChanged(DIR_Y_POS);
         break;
     case Qt::Key_K:
-        if (currentSnakeDirection != DIR_Y_POS) {
-            currentSnakeDirection = DIR_Y_NEG;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+        emit gameSnakeDirectionChanged(DIR_Y_NEG);
         break;
     case Qt::Key_J:
-        if (currentSnakeDirection != DIR_X_POS) {
-            currentSnakeDirection = DIR_X_NEG;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+        emit gameSnakeDirectionChanged(DIR_X_NEG);
         break;
-    case Qt::Key_L:
-        if (currentSnakeDirection != DIR_X_NEG) {
-            currentSnakeDirection = DIR_X_POS;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+    case Qt::Key_L:;
+        emit gameSnakeDirectionChanged(DIR_X_POS);
         break;
     case Qt::Key_Insert:
-        if (currentSnakeDirection != DIR_Z_POS) {
-            currentSnakeDirection = DIR_Z_NEG;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+        emit gameSnakeDirectionChanged(DIR_Z_POS);
         break;
     case Qt::Key_Delete:
-        if (currentSnakeDirection != DIR_Z_NEG) {
-            currentSnakeDirection = DIR_Z_POS;
-            emit gameSnakeDirectionChanged(currentSnakeDirection);
-        }
+        emit gameSnakeDirectionChanged(DIR_Z_NEG);
         break;
 
-    case Qt::Key_Enter:
+    case Qt::Key_Return:
         emit gameResetPressed();
         break;
     }
