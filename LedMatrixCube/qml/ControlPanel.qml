@@ -23,9 +23,14 @@ Rectangle {
         anchors.margins: 10
         spacing: 10
 
+        Label{
+            text: "Matrix 3D Snake Game v0.1.0"
+            font.pixelSize: 20
+        }
+
         Label {
             text: "Developed by Huzaifa Irfan"
-            color: "white"
+            color: "Blue"
             font.pixelSize: 14
             font.italic: true
             MouseArea {

@@ -16,7 +16,7 @@ Window {
     height: 800
     // visibility: Window.FullScreen
     visible: true
-    title: "matrix_3d_snake_game"
+    title: "Matrix 3D Snake Game"
 
     property vector3d defaultCameraPosition: Qt.vector3d(100 * ledMatrixCube.matrixSize, 100 * ledMatrixCube.matrixSize, 110 * ledMatrixCube.matrixSize)
     property real defaultYaw: 25.0    // Left/right rotation
