@@ -23,26 +23,38 @@ Rectangle {
         anchors.margins: 10
         spacing: 10
 
+        Label {
+            text: "Developed by Huzaifa Irfan"
+            color: "white"
+            font.pixelSize: 14
+            font.italic: true
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Qt.openUrlExternally("https://huzaifairfan.com")
+            }
+        }
+
         Button {
             text: "Random Colors"
             width: parent.width
             onClicked: controlPanel.randomizeColors()
         }
-
-        Button {
-            text: "Turn On"
+        Row {
             width: parent.width
-            onClicked: controlPanel.turnOnLights()
-        }
 
-        Button {
-            text: "Turn Off"
-            width: parent.width
-            onClicked: controlPanel.turnOffLights()
-        }
+            Button {
+                text: "Turn On"
+                onClicked: controlPanel.turnOnLights()
+            }
 
+            Button {
+                text: "Turn Off"
+                onClicked: controlPanel.turnOffLights()
+            }
+        }
         Label {
-            text: "Camera Controls:"
+            text: "Camera:"
             font.bold: true
             color: "white"
         }
@@ -53,11 +65,6 @@ Rectangle {
         }
 
         // Camera position and rotation info
-        Label {
-            text: "Camera Position:"
-            font.bold: true
-            color: "white"
-        }
         Label {
             text: "X: " + camera.x.toFixed(1) + " Y: " + camera.y.toFixed(1) + " Z: " + camera.z.toFixed(1)
             color: "white"
@@ -75,43 +82,19 @@ Rectangle {
         }
 
         Label {
-            text: "Game Controls:"
+            text: "Game:"
             font.bold: true
             color: "white"
         }
 
         Label {
-            text: "Return/Backspace: Start/Stop"
+            text: "Enter/Period: Start/Stop"
             color: "white"
         }
 
         Label {
-            text: "8456 Snake Move"
+            text: "5123 74 Snake Move"
             color: "white"
-        }
-
-        Label {
-            text: "O/L: Snake Move Z"
-            color: "white"
-        }
-
-        Label {
-            text: "Game "
-            font.bold: true
-            color: "white"
-        }
-
-        Label {
-            text: "Tick (ms):"
-            color: "white"
-        }
-        SpinBox {
-            from: 100
-            to: 5000
-            stepSize: 100
-            value: controlPanel.game_tick_ms
-            onValueChanged: controlPanel.game_tick_ms = value
-            width: parent.width
         }
 
         Label {
@@ -126,6 +109,22 @@ Rectangle {
             text: "Snake Length: " + controlPanel.snake_length
             color: "white"
         }
+        
+
+        Label {
+            text: "Game Tick Delay (ms):"
+            color: "white"
+        }
+        SpinBox {
+            from: 100
+            to: 5000
+            stepSize: 100
+            value: controlPanel.game_tick_ms
+            onValueChanged: controlPanel.game_tick_ms = value
+            width: parent.width
+        }
+
+
     }
 
     function randomizeColors() {
