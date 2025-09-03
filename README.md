@@ -12,7 +12,7 @@
 
 ## 🎬 Demo
 
-[![Demo](https://img.youtube.com/vi/7YyrIgjaaYA/maxresdefault.jpg)▶️](https://www.youtube.com/watch?v=7YyrIgjaaYA)
+[▶️![Demo](https://img.youtube.com/vi/7YyrIgjaaYA/maxresdefault.jpg)](https://www.youtube.com/watch?v=7YyrIgjaaYA)
 
 
 # 📦 Release
